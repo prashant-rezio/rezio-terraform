@@ -94,7 +94,7 @@ Each component (VPC, RDS, ECS) is built as a separate module. This allows:
   - `rezio-public-subnet-1`
   - `rezio-public-subnet-2`
 
-  **Verification**:
+  **Verification from cli**:
   ```bash
   aws elbv2 describe-load-balancers --names rezio-prod-alb
   ```
