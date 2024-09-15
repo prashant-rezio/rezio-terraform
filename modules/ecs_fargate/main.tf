@@ -2,13 +2,15 @@ resource "aws_ecs_cluster" "rezio_prod_cluster" {
   name = var.cluster_name
 }
 
+# ECS Task Definition with execution role added
 resource "aws_ecs_task_definition" "rezio_backend" {
-  family                = "rezio-backend"
-  network_mode          = "awsvpc"
+  family                   = "rezio-backend"
+  network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                   = 256
-  memory                = 512
-  container_definitions = jsonencode([{
+  cpu                      = 256
+  memory                   = 512
+  execution_role_arn       = var.execution_role_arn  # Use the passed execution_role_arn variable
+  container_definitions    = jsonencode([{
     name      = "backend"
     image     = var.backend_image
     essential = true
@@ -23,6 +25,7 @@ resource "aws_ecs_task_definition" "rezio_backend" {
   }])
 }
 
+# ECS Service
 resource "aws_ecs_service" "rezio_backend_service" {
   name            = "rezio-backend-service"
   cluster         = aws_ecs_cluster.rezio_prod_cluster.id
@@ -34,6 +37,7 @@ resource "aws_ecs_service" "rezio_backend_service" {
     security_groups = [aws_security_group.ecs_sg.id]
   }
 }
+
 # Security group for ECS tasks
 resource "aws_security_group" "ecs_sg" {
   name        = "rezio-ecs-sg"
